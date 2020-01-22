@@ -2,6 +2,49 @@
     margin-bottom: 20px;
 }
 
+.form {
+    display: flex;
+    flex-flow: column nowrap;
+    margin-left: 20px;
+    width: 300px;
+}
+
+.form * {
+    margin: 10px;
+}
+
 .menu__link {
     margin-right: 10px;
+}
+
+.library * {
+    margin-bottom: 10px;
+}
+
+.library__link {
+    margin-left: 10px;
+    text-decoration: none;
+    background: lightskyblue;
+    color: black;
+    border: 1px solid black;
+}
+
+.regSection {
+    display: flex;
+    flex-flow: column nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.regSection * {
+    margin-bottom: 10px;
+}
+
+.regForm {
+    display: flex;
+    flex-flow: column nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 }

@@ -28,7 +28,7 @@ class Http {
             options.body = JSON.stringify(data);
         }
 
-        return fetch(`http://localhost:8002/${path}`, options)
+        return fetch(`https://tvoesolncee-library.herokuapp.com/${path}`, options)
             .then(resp => {
                 if (!resp.ok) {
                     throw resp.json();

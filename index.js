@@ -4,162 +4,157 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const uuid = require('uuid/v4');
 
-// TODO create es6 class
-
-const app = express();
-app.use(body.json());
-app.use(cookieParser());
-
-// TODO build up cors
-app.use(cors({origin: '*'}));
-
-const starWarsUser = [
-    {
-        name: "Luke Skywalker",
-        birthYear: "19BBY",
-        mass: 77,
-        height: 172,
-    },
-    {
-        name: "Leia Organa",
-        birthYear: "19BBY",
-        mass: 49,
-        height: 150,
-    },
-    {
-        name: "C-3PO",
-        birthYear: "112BBY",
-        mass: 75,
-        height: 167,
+class App {
+    constructor() {
+        this.app = express();
+        this.app.use(body.json());
+        this.app.use(cors({
+            origin: 'http://localhost:63342',
+            credentials: true
+        }));
+        this.app.use(cookieParser());
+        this.startRoutes();
+        this.port = process.env.PORT || 8002;
+        this.app.listen(this.port, () => {
+            console.log(`Server listening port ${this.port}`)
+        });
     }
-];
 
-const appUsers = new Map();
-const cookieID = new Map();
+    startRoutes() {
+        this.app.post('/signup', this.signUpController);
 
-const books = new Map([
-    [1, {id: 1, title: 'book1', year: 1930, info: 'normas kniga'}],
-    [2, {id: 2, title: 'book2', year: 1885, info: 'ne nravitsya'}],
-    [3, {id: 3, title: 'book3', year: 2000, info: 'wow'}],
+        this.app.get('/me', this.getUserController);
+
+        this.app.post('/login', this.logInController);
+
+        this.app.post('/logout', this.logOutController);
+
+        this.app.get('/books', this.getBooksController);
+
+        this.app.post('/books', this.addBookController);
+
+        this.app.post('/books/edit', this.editBookController);
+
+        this.app.delete('/books/delete', this.deleteBookController);
+    }
+
+    signUpController = (req, res) => {
+        const {email, password, gender} = req.body;
+        const validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!email || !email.match(validEmail) ||
+            !password || password.length <= 4 ||
+            !gender) {
+            return res.status(400).json({error: 'Не валидные данные пользователя.'});
+        }
+        if (Array.from(users.keys()).includes(email)) {
+            return res.status(400).json({error: 'Пользователь с таким e-mail уже зарегистрирован.'});
+        }
+        const user = {email, password, gender};
+        users.set(email, user);
+        const sessionid = uuid();
+        sessions.set(sessionid, email);
+        res.cookie('sessionid', sessionid, {expires: new Date(Date.now() + 3600 * 1000)});
+        res.status(201).json(user);
+    };
+
+    getUserController = (req, res) => {
+        if (!req.cookies['sessionid']) {
+            return res.status(401).json({error: 'Пользователь не авторизован.'});
+        }
+        const sessionid = req.cookies['sessionid'];
+        const email = sessions.get(sessionid);
+        const user = users.get(email).email;
+        res.status(200).json(user);
+    };
+
+    logInController = (req, res) => {
+        const {email, password} = req.body;
+        if (!email || !password) {
+            return res.status(400).json({error: 'Не указан e-mail и/или пароль.'});
+        }
+        if (!users.has(email) || users.get(email).password !== password) {
+            return res.status(400).json({error: 'Неверный e-mail и/или пароль.'});
+        }
+        const sessionid = uuid();
+        sessions.set(sessionid, email);
+        res.cookie('sessionid', sessionid, {expires: new Date(Date.now() + 3600 * 1000)});
+        res.status(200).json({status: 'ok'});
+    };
+
+    logOutController = (req, res) => {
+        const sessionid = req.cookies['sessionid'];
+        sessions.delete(sessionid);
+        res.clearCookie('sessionid');
+        res.status(200).json({status: 'ok'});
+    };
+
+    getBooksController = (req, res) => {
+        if (!req.cookies['sessionid']) {
+            return res.status(403).json({error: 'Авторизуйтесь, чтобы просмотреть список дел.'});
+        }
+        res.status(200).json({books: Array.from(books.values())});
+    };
+
+    addBookController = (req, res) => {
+        if (!req.cookies['sessionid']) {
+            return res.status(403).json({error: 'Авторизуйтесь, чтобы добавить новую книгу.'});
+        }
+        const {title, year, info} = req.body;
+        if (!title || !year || !info) {
+            return res.status(400).json({error: 'Введите информацию'});
+        }
+        const id = uuid();
+        const book = {id, title, year, info};
+        console.log(book);
+        books.set(id, book);
+        res.status(201).json(book);
+    };
+
+    editBookController = (req, res) => {
+        if (!req.cookies['sessionid']) {
+            return res.status(403).json({error: 'Авторизуйтесь, чтобы добавить новую книгу.'});
+        }
+        const {id, title, year, info} = req.body;
+        if (!title || !year || !info) {
+            return res.status(400).json({error: 'Введите информацию'});
+        }
+        const book = {id, title, year, info};
+        books.delete(id);
+        books.set(id, book);
+        res.status(201).json(book);
+    };
+
+    deleteBookController = (req, res) => {
+        if (!req.cookies['sessionid']) {
+            return res.status(403).json({error: 'Авторизуйтесь, чтобы редактировать список дел.'});
+        }
+        const {id} = req.body;
+        console.log(id);
+        const book = books.get(id);
+        //console.log(book);
+        console.log(id);
+        books.delete(id);
+        //console.log(books);
+        res.status(201).json(book);
+    };
+}
+
+new App();
+
+const users = new Map([
+    ['user@user.com', {
+        email: 'user@user.com',
+        password: '1234',
+        gender: 'man',
+    }]
 ]);
 
-const phrases = [
-    {
-        title: "Красивое лучше, чем уродливое."
-    },
-    {
-        title: "Явное лучше, чем неявное."
-    },
-    {
-        title: "Простое лучше, чем сложное."
-    },
-    {
-        title: "Сложное лучше, чем запутанное."
-    },
-    {
-        title: "Плоское лучше, чем вложенное."
-    },
-    {
-        title: "Читаемость имеет значение."
-    },
-    {
-        title: "При этом практичность важнее безупречности."
-    },
-    {
-        title: "Ошибки никогда не должны замалчиваться."
-    },
-    {
-        title: "Встретив двусмысленность, отбрось искушение угадать."
-    },
-    {
-        title: "Сейчас лучше, чем никогда."
-    },
-    {
-        title: "Сейчас лучше, чем никогда."
-    },
-    {
-        title: "Хотя никогда зачастую лучше, чем прямо сейчас."
-    }
-];
+const sessions = new Map([]);
 
-app.get('/users', function (req, res) {
-    res.status(200).json(starWarsUser);
-});
+const books = new Map([
+    [1, {id: 1, title: 'Анна Каренина', year: 1873, info: 'Лев Толстой'}],
+    [2, {id: 2, title: 'Маленький принц', year: 1942, info: 'Антуан де Сент Экзюпери'}],
+    [3, {id: 3, title: 'Алые паруса', year: 1923, info: 'Александр Грин'}]
+]);
 
-app.get('/phrases', function (req, res) {
-    res.status(200).json(phrases);
-});
 
-app.get('/books', function (req, res) {
-    res.status(200).json(Array.from(books.values()));
-});
-
-app.delete('/books:id', function (req, res) {
-    const id = req.params;
-    console.log(id);
-    books.delete(id);
-    console.log(books);
-    res.status(200);
-});
-
-// TODO
-
-app.post("/signup", function (req, res) {
-
-    const {mail, passw, gender} = req.body;
-    console.log(mail);
-
-    if (!mail || !passw) return res.status(400).json({error: 'error mail/password'});
-
-    const newUser = {mail, passw, gender};
-    appUsers.set(mail, newUser);
-
-    const id = uuid();
-    cookieID.set(mail, id);
-    res.cookie('sessionid', id);
-
-    return res.status(201).json({mail: mail, gender: gender});
-});
-
-app.post("/login", function (req, res) {
-
-    const {mail, passw} = req.body;
-    const user = {mail, passw};
-
-    if (appUsers.has(mail)) {
-        let registeredUser = appUsers.get(mail);
-        if (registeredUser.mail === mail && registeredUser.passw === passw) {
-            res.cookie("user", user.mail);
-            return res.status(200).json(user);
-        } else {
-            return res.status(400).json({error: 'error mail/password'});
-        }
-    }
-    return res.status(400).json({error: 'no such user'});
-});
-
-app.get("/logout", function (req, res) {
-    res.clearCookie('user');
-    res.send('user logout successfully');
-});
-
-app.get("/me", function (req, res) {
-    const username = req.cookies['user'];
-
-    if (username) {
-        return res.send(username);
-    }
-
-    return res.status(401).json({error: 'no cookie'});
-});
-
-//  /signup (post запоминаем пользователя, выставляем куки -> 201 created)
-//  /login (если у нас есть пользователь, высталяем куки -> 200)
-//  /me (парсим куки - если сессионной куки нет -> 401 Unauthorized, иначе возвращаем пользователя)
-//  /logout (сбрасываем куки)
-
-const port = process.env.PORT || 8002;
-
-app.listen(port, function () {
-    console.log(`Server listening port ${port}`);
-});

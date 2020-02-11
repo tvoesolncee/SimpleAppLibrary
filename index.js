@@ -1,48 +1,65 @@
 const app = document.getElementById('app');
 
-// TODO create HTTP service, добавить get, post (посмотреть на Angular http client)
-function ajax(method, path, id = '') {
-    const options = {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-        },
-        mode: 'cors',
-        params: id
-    };
+class Http {
+    static get(path, data = null) {
+        return Http._request('GET', path, data);
+    }
 
-    return fetch(`http://localhost:8002/${path}` + id, options)
-        .then(resp => resp.json());
+    static post(path, data = null) {
+        return Http._request('POST', path, data);
+    }
+
+    static delete(path, data = null) {
+        return Http._request('DELETE', path, data);
+    }
+
+    static _request(method, path, data) {
+        const options = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+
+            },
+            mode: 'cors',
+            credentials: 'include'
+        };
+
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+
+        return fetch(`http://localhost:8002/${path}`, options)
+            .then(resp => {
+                if (!resp.ok) {
+                    throw resp.json();
+                }
+                return resp.json();
+            })
+            .catch(async responseError => {
+                const err = await responseError.then(error => {
+                    return error;
+                });
+                console.log(err);
+                return Promise.reject(err)
+            });
+    }
+
 }
 
-function sendData(method, path, userData) {
-    const options = {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-        },
-        mode: 'cors',
-        body: JSON.stringify(userData),
-    };
-    console.log('sendData');
-    return fetch(`http://localhost:8002/${path}`, options)
-        .then(resp => resp.json());
-}
 function createStartPage() {
 
     const regSection = document.createElement('section');
     regSection.dataset.sectionName = 'registration';
     regSection.classList.add('regSection');
 
-    const regHead = document.createTextNode('Registration');
+    const regHead = document.createElement('h2');
+    regHead.textContent = 'Registration';
     regSection.append(regHead);
 
     const regForm = document.createElement('form');
     regForm.classList.add('regForm');
     regForm.setAttribute('name', 'person');
     regForm.setAttribute('id', 'person');
-    regForm.setAttribute('action', 'signup');
-    regForm.setAttribute('method', 'POST');
 
     const email = document.createElement('input');
     email.setAttribute('type', 'email');
@@ -56,7 +73,8 @@ function createStartPage() {
     password.setAttribute('placeholder', 'Enter Your Password');
     regForm.append(password);
 
-    const gender = document.createTextNode('Choose Your Gender');
+    const gender = document.createElement('strong');
+    gender.textContent = 'Choose Your Gender';
     regForm.append(gender);
 
     const genderInputMan = document.createElement('input');
@@ -93,6 +111,7 @@ function createStartPage() {
     const sendButton = document.createElement('input');
     sendButton.setAttribute('type', 'submit');
     sendButton.setAttribute('value', 'Send');
+    sendButton.classList.add('regform__button');
     regForm.append(sendButton);
 
     regSection.append(regForm);
@@ -100,20 +119,47 @@ function createStartPage() {
     const alreadyRegistered = document.createElement('a');
     alreadyRegistered.href = 'login';
     alreadyRegistered.dataset.href = 'login';
+    alreadyRegistered.classList.add('login');
     alreadyRegistered.textContent = 'Already have an account? Log in.';
     regSection.append(alreadyRegistered);
 
     app.append(regSection);
+
+    alreadyRegistered.addEventListener('click', (event) => {
+        event.preventDefault();
+        app.innerHTML = '';
+        createLoginPage();
+    });
+
+    regForm.addEventListener('submit', event => {
+
+        event.preventDefault();
+
+        const userData = {
+            email: regForm.mail.value,
+            password: regForm.passw.value,
+            gender: regForm.gender.value
+        };
+
+        console.log(userData);
+        Http.post('signup', userData)
+            .then(response => {
+                console.log(response);
+                app.innerHTML = '';
+                createLibrary();
+            });
+    });
 }
 
-//createStartPage();
+createStartPage();
 
 function createLoginPage() {
     const loginSection = document.createElement('section');
     loginSection.dataset.sectionName = 'login';
     loginSection.classList.add('regSection');
 
-    const regHead = document.createTextNode('Log in');
+    const regHead = document.createElement('h2');
+    regHead.textContent = 'Log in';
     loginSection.append(regHead);
 
     const regForm = document.createElement('form');
@@ -129,19 +175,49 @@ function createLoginPage() {
     const password = document.createElement('input');
     password.setAttribute('type', 'password');
     password.setAttribute('name', 'passw');
+    password.classList.add('regform__password');
     password.setAttribute('placeholder', 'Enter Your Password');
     regForm.append(password);
 
     const sendButton = document.createElement('input');
     sendButton.setAttribute('type', 'submit');
     sendButton.setAttribute('value', 'Send');
+    sendButton.classList.add('regform__button');
     regForm.append(sendButton);
 
     loginSection.append(regForm);
+
+    const notRegistered = document.createElement('a');
+    notRegistered.href = 'signup';
+    notRegistered.dataset.href = 'signup';
+    notRegistered.classList.add('signup');
+    notRegistered.textContent = 'I don`t have an account. Sign up.';
+
+    loginSection.append(notRegistered);
     app.append(loginSection);
+
+    regForm.addEventListener('submit', (event) => {
+
+        event.preventDefault();
+
+        let form = document.user;
+        console.log(form);
+
+        const userData = {
+            email: regForm.mail.value,
+            password: regForm.passw.value
+        };
+
+        console.log(userData);
+
+        Http.post('login', userData)
+            .then(() => {
+                app.innerHTML = '';
+                createLibrary();
+            });
+    });
 }
 
-//TODO очень много дублирования кода по созданию элемента - написать для этого класс, который принимает объект с атрибутами, можно добавить методы показать, скрыть, естановить данные, удалить и т.д
 function createMenu() {
     const menuSection = document.createElement('section');
     menuSection.dataset.sectionName = 'menu';
@@ -150,10 +226,8 @@ function createMenu() {
     main.classList.add('menu');
 
     const titles = {
-        menu: 'Закрыть',
-        users: 'Пользователи',
-        phrase: 'Топ фразы',
         library: 'Библиотека',
+        exit: 'Выйти'
     };
 
     Object.entries(titles).forEach(function (entry) {
@@ -170,60 +244,24 @@ function createMenu() {
     });
 
     menuSection.append(main);
-    app.append(menuSection);
-}
 
-function createUserPage() {
-    const userPageSection = document.createElement('section');
-    userPageSection.dataset.sectionName = 'users';
+    const userMail = document.createElement('div');
+    userMail.classList.add('user');
 
-    const ul = document.createElement('ul');
-
-    ajax('GET', 'users')
-        .then(users => {
-            users.forEach(user => {
-                let li = document.createElement('li');
-                const span = document.createElement('span');
-                span.textContent = `${user.name}, планета ${user.birthYear}, весит аж ${user.mass}, ростом ${user.height}`;
-                li.append(span);
-                ul.append(li);
-            })
+    Http.get('me')
+        .then( user => {
+            userMail.textContent = `Пользователь: ${user}`;
+            menuSection.append(userMail);
+            app.prepend(menuSection);
         });
-
-    userPageSection.append(ul);
-    createMenu();
-    app.append(userPageSection)
-}
-
-function createPhrasesPage() {
-    const phrasesPageSection = document.createElement('section');
-    phrasesPageSection.dataset.sectionName = 'phrase';
-
-    const ul = document.createElement('ul');
-
-    ajax('GET', 'phrases')
-        .then(phrases => {
-            phrases.map(phrase => {
-                let li = document.createElement('li');
-                const span = document.createElement('span');
-                span.textContent = `${phrase.title}`;
-                li.append(span);
-                ul.append(li);
-            })
-        });
-
-    phrasesPageSection.append(ul);
-    createMenu();
-    app.append(phrasesPageSection)
 }
 
 function createAddBookPage() {
     const newBook = document.createElement('form');
     newBook.classList.add('form');
+    newBook.classList.add('newbook');
     newBook.setAttribute('name', 'book');
     newBook.setAttribute('id', 'book');
-    newBook.setAttribute('action', 'signup');
-    newBook.setAttribute('method', 'POST');
 
     const title = document.createElement('input');
     title.setAttribute('type', 'text');
@@ -243,23 +281,53 @@ function createAddBookPage() {
     comment.setAttribute('placeholder', 'Book comment');
     newBook.append(comment);
 
+    const sendButton = document.createElement('button');
+    sendButton.setAttribute('type', 'submit');
+    sendButton.setAttribute('value', 'Send');
+    sendButton.textContent = 'Отправить';
+    sendButton.classList.add('form__button');
+    newBook.append(sendButton);
+
     app.append(newBook);
 
+    newBook.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const bookData = {
+            title: newBook.title.value,
+            year: newBook.year.value,
+            info: newBook.comment.value
+        };
+
+        Http.post('books', bookData)
+            .then(() => {
+                app.innerHTML = '';
+                createLibrary();
+            })
+    });
+
+
+
     const a = document.createElement('a');
+    a.classList.add('link__back');
     a.href = `back`;
     a.dataset.href = `back`;
     a.textContent = `Go back`;
     app.append(a);
 }
 
-createMenu();
-
 function deleteBook(id) {
-    ajax('DELETE', 'books', id)
-        .then(console.log('done'));
-    //app.innerHTML = '';
-    //createLibrary();
-
+    const error = document.createElement('span');
+    Http.delete('books/delete', id)
+        .then(() => {
+            app.innerHTML = '';
+            createLibrary();
+        })
+        .catch(response => {
+            console.log(response);
+            error.textContent = response.error;
+            app.append(error);
+        })
 }
 
 function createLibrary() {
@@ -267,12 +335,19 @@ function createLibrary() {
     library.dataset.sectionName = 'library';
     library.classList.add('library');
 
-    const ul = document.createElement('ul');
+    const a = document.createElement('a');
+    a.href = `addbook`;
+    a.dataset.href = `addbook`;
+    a.textContent = `Добавить книгу`;
+    a.classList.add('library__add');
 
-    ajax('GET', 'books')
-        .then(books => {
-            console.log(books);
-            books.map(book => {
+    const ul = document.createElement('ul');
+    ul.classList.add('library__list');
+    const error = document.createElement('span');
+
+    Http.get('books')
+        .then(response => {
+            response.books.map(book => {
                 console.log(book);
                 let li = document.createElement('li');
                 const a = document.createElement('a');
@@ -283,106 +358,164 @@ function createLibrary() {
                 a.setAttribute('information', JSON.stringify(book));
                 li.append(a);
 
-                const del = document.createElement('a');
-                del.href = `delete`;
-                del.textContent = 'DELETE';
-                del.classList.add('library__link');
-                del.setAttribute('onclick', `deleteBook(${book.id});`);
-                li.append(del);
+                const del = document.createElement('button');
+                del.textContent = 'x';
+                del.classList.add('library__del');
+                li.prepend(del);
 
                 ul.append(li);
+
+                del.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    deleteBook(book.id);
+                });
             })
+        })
+        .catch(response => {
+            console.log(response);
+            error.textContent = response.error;
+            library.append(error);
         });
 
     library.append(ul);
     createMenu();
+    library.prepend(a);
     app.append(library);
-
-    const a = document.createElement('a');
-    a.href = `addbook`;
-    a.dataset.href = `addbook`;
-    a.textContent = `Добавить книгу`;
-    app.append(a);
 }
 
 function createBookPage(bookString) {
+    let bookPage = document.createElement('div');
+    bookPage.classList.add('book');
+
     let book = JSON.parse(bookString);
     const header = document.createElement('h1');
+    header.classList.add('book__header');
     header.textContent = book.title;
     const year = document.createElement('div');
-    year.textContent = `Year: ${book.year}`;
+    year.classList.add('book__year');
+    year.textContent = `Год: ${book.year}`;
     const comment = document.createElement('div');
-    comment.textContent = `Comment: ${book.info}`;
-    app.append(header);
-    app.append(year);
-    app.append(comment);
+    comment.classList.add('book__info');
+    comment.textContent = `Автор: ${book.info}`;
+    bookPage.append(header);
+    bookPage.append(year);
+    bookPage.append(comment);
+
+    const editBook = document.createElement('a');
+    editBook.href = `edit`;
+    editBook.dataset.href = `edit`;
+    editBook.textContent = `Edit`;
+    editBook.classList.add('editlink');
+    bookPage.append(editBook);
+    bookPage.append(document.createElement('br'));
+
+    editBook.addEventListener('click', (event) => {
+        event.preventDefault();
+        app.innerHTML = '';
+        createEditBookPage(book);
+    });
+
+    app.append(bookPage);
 
     const a = document.createElement('a');
+    a.classList.add('link__back');
     a.href = `back`;
     a.dataset.href = `back`;
     a.textContent = `Go back`;
     app.append(a);
 }
 
+function createEditBookPage(book) {
+    const editBook = document.createElement('form');
+    editBook.classList.add('form');
+    editBook.setAttribute('name', 'editor');
+    editBook.setAttribute('id', 'book');
+
+    const title = document.createElement('input');
+    title.setAttribute('type', 'text');
+    title.setAttribute('name', 'title');
+    title.setAttribute('value', `${book.title}`);
+    editBook.append(title);
+
+    const year = document.createElement('input');
+    year.setAttribute('type', 'text');
+    year.setAttribute('name', 'year');
+    year.setAttribute('value', `${book.year}`);
+    editBook.append(year);
+
+    const comment = document.createElement('input');
+    comment.setAttribute('type', 'text');
+    comment.setAttribute('name', 'comment');
+    comment.setAttribute('value', `${book.info}`);
+    editBook.append(comment);
+
+    const sendButton = document.createElement('button');
+    sendButton.setAttribute('type', 'submit');
+    sendButton.setAttribute('value', 'Send');
+    sendButton.classList.add('form__button');
+    sendButton.textContent = 'Отправить';
+    editBook.append(sendButton);
+
+    app.append(editBook);
+
+    editBook.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const bookData = {
+            id: book.id,
+            title: editBook.title.value,
+            year: editBook.year.value,
+            info: editBook.comment.value
+        };
+
+        Http.post('books/edit', bookData)
+            .then(() => {
+                app.innerHTML = '';
+                createLibrary();
+            })
+    });
+
+
+
+    const a = document.createElement('a');
+    a.classList.add('link__back');
+    a.href = `back`;
+    a.dataset.href = `back`;
+    a.textContent = `Go back`;
+    app.append(a);
+}
+
+function exit() {
+    Http.post('logout')
+        .then(() => {
+            app.innerHTML = '';
+            createStartPage();
+        });
+}
+
 const pages = {
-    users: createUserPage,
-    phrase: createPhrasesPage,
-    menu: createMenu,
-    login: createLoginPage,
     library: createLibrary,
+    login: createLoginPage,
     back: createLibrary,
-    addbook: createAddBookPage
+    addbook: createAddBookPage,
+    exit: exit,
+    signup: createStartPage
 };
-/*
-const regForm = document.person;
-regForm.addEventListener('submit', (event) => {
-
-    event.preventDefault();
-
-    let form = document.person;
-    console.log(form);
-
-    let userData = {};
-    userData.mail = form.mail.value;
-    userData.passw = form.passw.value;
-    userData.gender = form.gender.value;
-
-    console.log(userData);
-
-    sendData('POST', 'signup', userData)
-        .then(user => console.log(user));
-
-    app.innerHTML = '';
-    createMenu();
-});
-
-const loginForm = document.user;
-loginForm.addEventListener('submit', (event) => {
-
-    event.preventDefault();
-
-    let form = document.user;
-    console.log(form);
-
-    let userData = {};
-    userData.mail = form.mail.value;
-    userData.passw = form.passw.value;
-
-    console.log(userData);
-
-    sendData('POST', 'login', userData)
-        .then(user => console.log(user));
-});
-
- */
 
 app.addEventListener('click', (event) => {
+
+    if (event.target instanceof HTMLInputElement && event.target.classList.contains('newbook')) {
+        event.preventDefault();
+        app.innerHTML = '';
+        createLibrary();
+        return;
+    }
 
     if (!(event.target instanceof HTMLAnchorElement)) {
         return;
     }
 
-    if (event.target.className === 'library__link') {
+    if (event.target.className === 'library__link'|| event.target.className === 'editlink') {
         event.preventDefault();
         return;
     }
@@ -392,13 +525,6 @@ app.addEventListener('click', (event) => {
         app.innerHTML = '';
         createBookPage(event.target.getAttribute('information'));
         return;
-        /*
-                event.preventDefault();
-                let bookInfo = document.createElement('div');
-                bookInfo.append('information');
-                event.target.after(bookInfo);
-                return;
-         */
     }
 
     event.preventDefault();

@@ -1,33 +1,28 @@
-.menu {
-    margin-bottom: 20px;
+body {
+    display: flex;
+    justify-content: center;
+    background: aliceblue;
+    font-size: 18px;
 }
 
-.form {
+body * {
+    background: white;
+}
+
+.app {
+    width: 300px;
+    min-height: 350px;
+    box-sizing: border-box;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1), 0 2px 6px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+
     display: flex;
     flex-flow: column nowrap;
-    margin-left: 20px;
-    width: 300px;
+    align-content: center;
+    justify-content: center;
+
 }
 
-.form * {
-    margin: 10px;
-}
-
-.menu__link {
-    margin-right: 10px;
-}
-
-.library * {
-    margin-bottom: 10px;
-}
-
-.library__link {
-    margin-left: 10px;
-    text-decoration: none;
-    background: lightskyblue;
-    color: black;
-    border: 1px solid black;
-}
 
 .regSection {
     display: flex;
@@ -47,4 +42,154 @@
     align-content: center;
     justify-content: center;
     align-items: center;
+}
+
+.regform__password {
+    margin-bottom: 112px;
+}
+
+.regform__button {
+    width: 80px;
+    cursor: pointer;
+    border: solid 4px lightsteelblue;
+    border-radius: 4px;
+    background: lightsteelblue;
+}
+
+.regform__button:hover {
+    background: cornflowerblue;
+    border-color: cornflowerblue;
+}
+
+.form {
+    display: flex;
+    flex-flow: column nowrap;
+    margin-left: 20px;
+    width: 250px;
+}
+
+.form input {
+    height: 20px;
+    margin: 10px;
+    border: solid 2px black;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.form__button {
+    background: lightsteelblue;
+    outline: none;
+    border: solid 4px lightsteelblue;
+    border-radius: 4px;
+    margin: 40px 0;
+}
+
+.form__button:hover {
+    background: cornflowerblue;
+    border-color: cornflowerblue;
+}
+
+.menu {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
+
+.menu__link:first-child {
+    margin-right: 50px;
+}
+
+.user {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.library {
+    display: flex;
+    flex-flow: column nowrap;
+    align-content: center;
+    justify-content: center;
+}
+
+.library__add {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: 292px;
+
+    margin-bottom: 15px;
+    cursor: pointer;
+    border: solid 4px lightsteelblue;
+    color: black;
+
+    background: lightsteelblue;
+}
+
+.library__add:hover {
+    background: cornflowerblue;
+    border-color: cornflowerblue;
+    text-decoration: none;
+}
+
+.library__list {
+    display: flex;
+    flex-flow: column nowrap;
+    align-content: flex-start;
+    list-style-type: none;
+}
+
+.library__list * {
+    margin-bottom: 5px;
+}
+
+.library__book {
+    margin-left: 20px;
+    text-decoration: none;
+    color: black;
+}
+
+.library__book:hover {
+    background: aliceblue;
+}
+
+.book {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    margin-top: -40px;
+}
+
+.book__header {
+    text-align: center;
+}
+
+.book__info {
+    margin-bottom: 30px;
+}
+
+.editlink {
+    background: lightsteelblue;
+    border: solid 2px lightsteelblue;
+    border-radius: 5px;
+    width: 80px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: black;
+    font-weight: 600;
+}
+
+.editlink:hover {
+    text-decoration: none;
+    background: cornflowerblue;
+    border-color: cornflowerblue;
+}
+
+.link__back {
+    align-self: center;
 }

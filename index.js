@@ -28,6 +28,7 @@ class Http {
             options.body = JSON.stringify(data);
         }
 
+        /* http://localhost:8002/ */
         return fetch(`https://tvoesolncee-library.herokuapp.com/${path}`, options)
             .then(resp => {
                 if (!resp.ok) {
@@ -318,7 +319,12 @@ function createAddBookPage() {
 
 function deleteBook(id) {
     const error = document.createElement('span');
-    Http.delete('books/delete', id)
+
+    const data = {
+        id: id
+    };
+
+    Http.delete('books/delete', data)
         .then(() => {
             app.innerHTML = '';
             createLibrary();

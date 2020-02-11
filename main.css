@@ -144,6 +144,8 @@ body * {
 }
 
 .library__list * {
+    display: flex;
+    flex-flow: row nowrap;
     margin-bottom: 5px;
 }
 
@@ -155,6 +157,24 @@ body * {
 
 .library__book:hover {
     background: aliceblue;
+}
+
+.library__del {
+    color: lightsteelblue;
+    width: auto;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+    background-image: linear-gradient(to left, transparent, transparent 50%, lightsteelblue 50%, lightsteelblue);
+    background-position: 100% 0;
+    background-size: 200% 100%;
+    transition: all .25s ease-in;
+    border: 1px solid lightsteelblue;
+}
+
+.library__del:hover {
+    background-position: 0 0;
+    color: #fff;
 }
 
 .book {

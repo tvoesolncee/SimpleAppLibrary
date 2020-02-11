@@ -10,6 +10,7 @@ class App {
         this.app.use(body.json());
         this.app.use(cors({
             origin: 'https://tvoesolncee-library-front.herokuapp.com',
+            //origin: 'http://localhost:63342',
             credentials: true
         }));
         this.app.use(cookieParser());
@@ -131,10 +132,7 @@ class App {
         const {id} = req.body;
         console.log(id);
         const book = books.get(id);
-        //console.log(book);
-        console.log(id);
         books.delete(id);
-        //console.log(books);
         res.status(201).json(book);
     };
 }

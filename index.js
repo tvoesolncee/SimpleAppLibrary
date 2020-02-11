@@ -279,7 +279,7 @@ function createAddBookPage() {
     const comment = document.createElement('input');
     comment.setAttribute('type', 'text');
     comment.setAttribute('name', 'comment');
-    comment.setAttribute('placeholder', 'Book comment');
+    comment.setAttribute('placeholder', 'Book author');
     newBook.append(comment);
 
     const sendButton = document.createElement('button');

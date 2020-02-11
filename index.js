@@ -9,7 +9,7 @@ class App {
         this.app = express();
         this.app.use(body.json());
         this.app.use(cors({
-            origin: 'http://localhost:63342',
+            origin: 'https://tvoesolncee-library.herokuapp.com',
             credentials: true
         }));
         this.app.use(cookieParser());

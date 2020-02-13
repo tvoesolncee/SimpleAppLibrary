@@ -29,6 +29,7 @@ class Http {
         }
 
         /* http://localhost:8002/ */
+        /* https://tvoesolncee-library.herokuapp.com/ */
         return fetch(`https://tvoesolncee-library.herokuapp.com/${path}`, options)
             .then(resp => {
                 if (!resp.ok) {
@@ -58,7 +59,7 @@ function createStartPage() {
     regSection.append(regHead);
 
     const regForm = document.createElement('form');
-    regForm.classList.add('regForm');
+    regForm.classList.add('regform');
     regForm.setAttribute('name', 'person');
     regForm.setAttribute('id', 'person');
 
@@ -132,6 +133,9 @@ function createStartPage() {
         createLoginPage();
     });
 
+    const error = document.createElement('span');
+    error.classList.add('error');
+
     regForm.addEventListener('submit', event => {
 
         event.preventDefault();
@@ -148,7 +152,12 @@ function createStartPage() {
                 console.log(response);
                 app.innerHTML = '';
                 createLibrary();
-            });
+            })
+            .catch(response => {
+                console.log(response);
+                error.textContent = response.error;
+                app.prepend(error);
+            })
     });
 }
 
@@ -164,7 +173,7 @@ function createLoginPage() {
     loginSection.append(regHead);
 
     const regForm = document.createElement('form');
-    regForm.classList.add('regForm');
+    regForm.classList.add('regform');
     regForm.setAttribute('name', 'user');
 
     const email = document.createElement('input');
@@ -197,6 +206,9 @@ function createLoginPage() {
     loginSection.append(notRegistered);
     app.append(loginSection);
 
+    const error = document.createElement('span');
+    error.classList.add('error');
+
     regForm.addEventListener('submit', (event) => {
 
         event.preventDefault();
@@ -215,7 +227,12 @@ function createLoginPage() {
             .then(() => {
                 app.innerHTML = '';
                 createLibrary();
-            });
+            })
+            .catch(response => {
+                console.log(response);
+                error.textContent = response.error;
+                app.prepend(error);
+            })
     });
 }
 
@@ -227,7 +244,7 @@ function createMenu() {
     main.classList.add('menu');
 
     const titles = {
-        library: 'Библиотека',
+        library: 'Список книг',
         exit: 'Выйти'
     };
 
@@ -247,13 +264,16 @@ function createMenu() {
     menuSection.append(main);
 
     const userMail = document.createElement('div');
-    userMail.classList.add('user');
+    userMail.classList.add('menu__user');
 
     Http.get('me')
         .then( user => {
             userMail.textContent = `Пользователь: ${user}`;
             menuSection.append(userMail);
             app.prepend(menuSection);
+        })
+        .catch(error => {
+            console.log(error);
         });
 }
 
@@ -291,6 +311,9 @@ function createAddBookPage() {
 
     app.append(newBook);
 
+    const error = document.createElement('span');
+    error.classList.add('error');
+
     newBook.addEventListener('submit', (event) => {
         event.preventDefault();
 
@@ -305,9 +328,12 @@ function createAddBookPage() {
                 app.innerHTML = '';
                 createLibrary();
             })
+            .catch(response => {
+                console.log(response);
+                error.textContent = response.error;
+                app.prepend(error);
+            });
     });
-
-
 
     const a = document.createElement('a');
     a.classList.add('link__back');
@@ -319,6 +345,7 @@ function createAddBookPage() {
 
 function deleteBook(id) {
     const error = document.createElement('span');
+    error.classList.add('error');
 
     const data = {
         id: id
@@ -332,7 +359,7 @@ function deleteBook(id) {
         .catch(response => {
             console.log(response);
             error.textContent = response.error;
-            app.append(error);
+            app.prepend(error);
         })
 }
 
@@ -349,7 +376,9 @@ function createLibrary() {
 
     const ul = document.createElement('ul');
     ul.classList.add('library__list');
+
     const error = document.createElement('span');
+    error.classList.add('error');
 
     Http.get('books')
         .then(response => {
@@ -380,7 +409,7 @@ function createLibrary() {
         .catch(response => {
             console.log(response);
             error.textContent = response.error;
-            library.append(error);
+            app.prepend(error);
         });
 
     library.append(ul);
@@ -464,6 +493,9 @@ function createEditBookPage(book) {
 
     app.append(editBook);
 
+    const error = document.createElement('span');
+    error.classList.add('error');
+
     editBook.addEventListener('submit', (event) => {
         event.preventDefault();
 
@@ -479,9 +511,13 @@ function createEditBookPage(book) {
                 app.innerHTML = '';
                 createLibrary();
             })
+            .catch(response => {
+                console.log(response);
+                error.textContent = response.error;
+                app.prepend(error);
+            });
+
     });
-
-
 
     const a = document.createElement('a');
     a.classList.add('link__back');

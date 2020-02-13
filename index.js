@@ -91,7 +91,7 @@ class App {
 
     getBooksController = (req, res) => {
         if (!req.cookies['sessionid']) {
-            return res.status(403).json({error: 'Авторизуйтесь, чтобы просмотреть список дел.'});
+            return res.status(403).json({error: 'Авторизуйтесь, чтобы просмотреть список книг.'});
         }
         res.status(200).json({books: Array.from(books.values())});
     };
@@ -127,7 +127,7 @@ class App {
 
     deleteBookController = (req, res) => {
         if (!req.cookies['sessionid']) {
-            return res.status(403).json({error: 'Авторизуйтесь, чтобы редактировать список дел.'});
+            return res.status(403).json({error: 'Авторизуйтесь, чтобы редактировать список книг.'});
         }
         const {id} = req.body;
         console.log(id);

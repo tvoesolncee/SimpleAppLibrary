@@ -9,6 +9,11 @@ body * {
     background: white;
 }
 
+._theme {
+    background-color: #1e094d;
+    color: white;
+}
+
 .app {
     width: 300px;
     min-height: 350px;
@@ -20,6 +25,8 @@ body * {
     flex-flow: column nowrap;
     align-content: center;
     justify-content: center;
+    align-items: center;
+    color: black;
 }
 
 .error {
@@ -28,7 +35,7 @@ body * {
     text-shadow: -1px 1px 1px black,
     1px 1px 1px black;
     color: white;
-    background-color: #FFE4E1;
+    background-color: lightsteelblue;
 
 }
 
@@ -76,7 +83,6 @@ body * {
 .form {
     display: flex;
     flex-flow: column nowrap;
-    margin-left: 20px;
     width: 250px;
 }
 
@@ -89,11 +95,18 @@ body * {
 }
 
 .form__button {
+    align-self: center;
     background:linear-gradient(45deg,#3bade3 0%,#576fe6 25%,#9844b7 51%,#ff357f 100%);
     outline: none;
     text-decoration: underline;
     border-radius: 4px;
+    border: none;
     margin: 40px 0;
+    width: 100px;
+    height: 30px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .form__button:hover {
@@ -109,6 +122,20 @@ body * {
     height: 50px;
 }
 
+.menu__link {
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    background:linear-gradient(45deg,#ff357f 0%,#9844b7 25%,#576fe6 51%,#3bade3 100%);
+    line-height: 1.7rem;
+    border-radius: 2px;
+}
+
+.menu__link:hover {
+    background: cornflowerblue;
+    text-decoration: none;
+}
+
 .menu__link:first-child {
     margin-right: 50px;
 }
@@ -117,7 +144,7 @@ body * {
     display: flex;
     width: 100%;
     justify-content: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .library {
@@ -134,7 +161,7 @@ body * {
     align-items: center;
     width: 100%;
     height: 30px;
-
+    border-radius: 2px;
     margin-bottom: 15px;
     cursor: pointer;
     font-weight: 600;
@@ -152,6 +179,7 @@ body * {
     flex-flow: column nowrap;
     align-content: flex-start;
     list-style-type: none;
+    padding: 0;
 }
 
 .library__list * {
@@ -161,19 +189,26 @@ body * {
 }
 
 .library__book {
+    display: block;
+    width: 170px;
     margin-left: 20px;
     text-decoration: none;
-    color: black;
     word-wrap: break-word;
+    color: black;
 }
 
 .library__book:hover {
     text-decoration: underline;
 }
 
+.library__book._theme {
+    color: white;
+}
+
 .library__del {
     color: lightsteelblue;
     width: auto;
+    height: fit-content;
     text-decoration: none;
     text-align: center;
     display: block;
@@ -182,6 +217,7 @@ body * {
     background-size: 200% 100%;
     transition: all .25s ease-in;
     border: 1px solid lightsteelblue;
+    cursor: pointer;
 }
 
 .library__del:hover {
@@ -193,11 +229,14 @@ body * {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-    margin-top: -40px;
+    margin-top: 0;
+    width: 280px;
 }
 
-.book__header {
+.book * {
     text-align: center;
+    display: block;
+    word-break: break-word;
 }
 
 .book__info {
@@ -206,7 +245,7 @@ body * {
 
 .editlink {
     border-radius: 5px;
-    width: 80px;
+    width: 100px;
     height: 30px;
     display: flex;
     flex-direction: row;

@@ -49,6 +49,16 @@ class Http {
 }
 
 function createStartPage() {
+    Http.get('me')
+        .then(({email}) => {
+            app.innerHTML = '';
+            createLibrary();
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+    app.classList.remove('_theme');
 
     const regSection = document.createElement('section');
     regSection.dataset.sectionName = 'registration';
@@ -146,10 +156,8 @@ function createStartPage() {
             gender: regForm.gender.value
         };
 
-        console.log(userData);
         Http.post('signup', userData)
             .then(response => {
-                console.log(response);
                 app.innerHTML = '';
                 createLibrary();
             })
@@ -237,6 +245,9 @@ function createLoginPage() {
 }
 
 function createMenu() {
+    const name = document.createElement('h2');
+    name.textContent = 'СПИСОК КНИГ';
+
     const menuSection = document.createElement('section');
     menuSection.dataset.sectionName = 'menu';
 
@@ -244,7 +255,7 @@ function createMenu() {
     main.classList.add('menu');
 
     const titles = {
-        library: 'Список книг',
+        theme: 'Сменить тему',
         exit: 'Выйти'
     };
 
@@ -257,6 +268,9 @@ function createMenu() {
         a.dataset.href = href;
         a.textContent = title;
         a.classList.add('menu__link');
+        if (href === 'theme') {
+            a.classList.add('_changetheme');
+        }
 
         main.append(a);
     });
@@ -266,11 +280,19 @@ function createMenu() {
     const userMail = document.createElement('div');
     userMail.classList.add('menu__user');
 
+    if (app.classList.contains('_theme')) {
+        name.classList.add('_theme');
+        main.classList.add('_theme');
+        menuSection.classList.add('_theme');
+        userMail.classList.add('_theme');
+    }
+
     Http.get('me')
-        .then( user => {
+        .then(user => {
             userMail.textContent = `Пользователь: ${user}`;
             menuSection.append(userMail);
             app.prepend(menuSection);
+            app.prepend(name);
         })
         .catch(error => {
             console.log(error);
@@ -286,20 +308,23 @@ function createAddBookPage() {
 
     const title = document.createElement('input');
     title.setAttribute('type', 'text');
+    title.setAttribute('maxlength', '100');
     title.setAttribute('name', 'title');
-    title.setAttribute('placeholder', 'Book Title');
+    title.setAttribute('placeholder', 'Название');
     newBook.append(title);
 
     const year = document.createElement('input');
-    year.setAttribute('type', 'text');
+    year.setAttribute('type', 'number');
+    year.setAttribute('max', '2020');
     year.setAttribute('name', 'year');
-    year.setAttribute('placeholder', 'Book year');
+    year.setAttribute('placeholder', 'Год издания');
     newBook.append(year);
 
     const comment = document.createElement('input');
     comment.setAttribute('type', 'text');
+    comment.setAttribute('maxlength', '100');
     comment.setAttribute('name', 'comment');
-    comment.setAttribute('placeholder', 'Book author');
+    comment.setAttribute('placeholder', 'Автор книги');
     newBook.append(comment);
 
     const sendButton = document.createElement('button');
@@ -339,8 +364,10 @@ function createAddBookPage() {
     a.classList.add('link__back');
     a.href = `back`;
     a.dataset.href = `back`;
-    a.textContent = `Go back`;
+    a.textContent = `Назад`;
     app.append(a);
+
+    checkTheme();
 }
 
 function deleteBook(id) {
@@ -383,11 +410,9 @@ function createLibrary() {
     Http.get('books')
         .then(response => {
             response.books.map(book => {
-                console.log(book);
                 let li = document.createElement('li');
                 const a = document.createElement('a');
-                a.href = `${book.title}`;
-                a.dataset.href = `${book.title}`;
+                a.href = 'book';
                 a.textContent = `${book.title}`;
                 a.classList.add('library__book');
                 a.setAttribute('information', JSON.stringify(book));
@@ -399,6 +424,12 @@ function createLibrary() {
                 li.prepend(del);
 
                 ul.append(li);
+
+                if (app.classList.contains('_theme')) {
+                    li.classList.add('_theme');
+                    a.classList.add('_theme');
+                    del.classList.add('_theme');
+                }
 
                 del.addEventListener('click', (event) => {
                     event.preventDefault();
@@ -416,6 +447,10 @@ function createLibrary() {
     createMenu();
     library.prepend(a);
     app.append(library);
+    if (app.classList.contains('_theme')) {
+        library.classList.add('_theme');
+        ul.classList.add('_theme');
+    }
 }
 
 function createBookPage(bookString) {
@@ -439,7 +474,7 @@ function createBookPage(bookString) {
     const editBook = document.createElement('a');
     editBook.href = `edit`;
     editBook.dataset.href = `edit`;
-    editBook.textContent = `Edit`;
+    editBook.textContent = `Изменить`;
     editBook.classList.add('editlink');
     bookPage.append(editBook);
     bookPage.append(document.createElement('br'));
@@ -456,8 +491,9 @@ function createBookPage(bookString) {
     a.classList.add('link__back');
     a.href = `back`;
     a.dataset.href = `back`;
-    a.textContent = `Go back`;
+    a.textContent = `Назад`;
     app.append(a);
+    checkTheme();
 }
 
 function createEditBookPage(book) {
@@ -473,7 +509,8 @@ function createEditBookPage(book) {
     editBook.append(title);
 
     const year = document.createElement('input');
-    year.setAttribute('type', 'text');
+    year.setAttribute('type', 'number');
+    year.setAttribute('max', '2020');
     year.setAttribute('name', 'year');
     year.setAttribute('value', `${book.year}`);
     editBook.append(year);
@@ -523,8 +560,10 @@ function createEditBookPage(book) {
     a.classList.add('link__back');
     a.href = `back`;
     a.dataset.href = `back`;
-    a.textContent = `Go back`;
+    a.textContent = `Назад`;
     app.append(a);
+
+    checkTheme();
 }
 
 function exit() {
@@ -535,8 +574,26 @@ function exit() {
         });
 }
 
+function changeTheme() {
+    app.classList.toggle('_theme');
+
+    const menuItemsToChangeTheme = document.querySelectorAll('h2, section, .menu, .menu *, .menu__user, .library, .library *');
+    menuItemsToChangeTheme.forEach(item => {
+        item.classList.toggle('_theme');
+    })
+}
+
+function checkTheme() {
+    if (app.classList.contains('_theme')) {
+        const itemsToChange = document.querySelectorAll('.app *:not(input)');
+
+        itemsToChange.forEach(item => {
+            item.classList.toggle('_theme');
+        });
+    }
+}
+
 const pages = {
-    library: createLibrary,
     login: createLoginPage,
     back: createLibrary,
     addbook: createAddBookPage,
@@ -557,12 +614,19 @@ app.addEventListener('click', (event) => {
         return;
     }
 
-    if (event.target.className === 'library__link'|| event.target.className === 'editlink') {
+    if (event.target.classList.contains('_changetheme')) {
         event.preventDefault();
+        changeTheme();
         return;
     }
 
-    if (event.target.className === 'library__book') {
+    if (event.target.className === 'library__link' || event.target.classList.contains('editlink')) {
+        event.preventDefault();
+        console.log('!!!!!!!!!!');
+        return;
+    }
+
+    if (event.target.classList.contains('library__book')) {
         event.preventDefault();
         app.innerHTML = '';
         createBookPage(event.target.getAttribute('information'));

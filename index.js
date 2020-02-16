@@ -30,7 +30,7 @@ class Http {
 
         /* http://localhost:8002/ */
         /* https://tvoesolncee-library.herokuapp.com/ */
-        return fetch(`hhttps://tvoesolncee-library.herokuapp.com/${path}`, options)
+        return fetch(`https://tvoesolncee-library.herokuapp.com/${path}`, options)
             .then(resp => {
                 if (!resp.ok) {
                     throw resp.json();

@@ -30,7 +30,7 @@ class Http {
 
         /* http://localhost:8002/ */
         /* https://tvoesolncee-library.herokuapp.com/ */
-        return fetch(`https://tvoesolncee-library.herokuapp.com/${path}`, options)
+        return fetch(`hhttps://tvoesolncee-library.herokuapp.com/${path}`, options)
             .then(resp => {
                 if (!resp.ok) {
                     throw resp.json();
@@ -65,7 +65,8 @@ function createStartPage() {
     regSection.classList.add('regSection');
 
     const regHead = document.createElement('h2');
-    regHead.textContent = 'Registration';
+    regHead.textContent = 'Регистрация';
+    regHead.classList.add('header');
     regSection.append(regHead);
 
     const regForm = document.createElement('form');
@@ -76,17 +77,19 @@ function createStartPage() {
     const email = document.createElement('input');
     email.setAttribute('type', 'email');
     email.setAttribute('name', 'mail');
-    email.setAttribute('placeholder', 'Your Email');
+    email.setAttribute('placeholder', 'Введите email');
+    email.classList.add('regform__input');
     regForm.append(email);
 
     const password = document.createElement('input');
     password.setAttribute('type', 'password');
     password.setAttribute('name', 'passw');
-    password.setAttribute('placeholder', 'Enter Your Password');
+    password.setAttribute('placeholder', 'Введите пароль');
+    password.classList.add('regform__input');
     regForm.append(password);
 
     const gender = document.createElement('strong');
-    gender.textContent = 'Choose Your Gender';
+    gender.textContent = 'Выберите пол:';
     regForm.append(gender);
 
     const genderInputMan = document.createElement('input');
@@ -98,7 +101,7 @@ function createStartPage() {
 
     const labelMan = document.createElement('label');
     labelMan.setAttribute('for', 'man');
-    labelMan.textContent = 'Man';
+    labelMan.textContent = 'Мужчина';
 
     const chooseMan = document.createElement('div');
     chooseMan.append(genderInputMan);
@@ -113,7 +116,7 @@ function createStartPage() {
 
     const labelWoman = document.createElement('label');
     labelWoman.setAttribute('for', 'woman');
-    labelWoman.textContent = 'Woman';
+    labelWoman.textContent = 'Женщина';
 
     const chooseWoman = document.createElement('div');
     chooseWoman.append(genderInputWoman);
@@ -122,7 +125,7 @@ function createStartPage() {
 
     const sendButton = document.createElement('input');
     sendButton.setAttribute('type', 'submit');
-    sendButton.setAttribute('value', 'Send');
+    sendButton.setAttribute('value', 'Отправить');
     sendButton.classList.add('regform__button');
     regForm.append(sendButton);
 
@@ -131,8 +134,8 @@ function createStartPage() {
     const alreadyRegistered = document.createElement('a');
     alreadyRegistered.href = 'login';
     alreadyRegistered.dataset.href = 'login';
-    alreadyRegistered.classList.add('login');
-    alreadyRegistered.textContent = 'Already have an account? Log in.';
+    alreadyRegistered.classList.add('link');
+    alreadyRegistered.textContent = 'У Вас уже есть аккаунт? Войдите.';
     regSection.append(alreadyRegistered);
 
     app.append(regSection);
@@ -177,7 +180,8 @@ function createLoginPage() {
     loginSection.classList.add('regSection');
 
     const regHead = document.createElement('h2');
-    regHead.textContent = 'Log in';
+    regHead.textContent = 'Вход';
+    regHead.classList.add('header');
     loginSection.append(regHead);
 
     const regForm = document.createElement('form');
@@ -187,19 +191,21 @@ function createLoginPage() {
     const email = document.createElement('input');
     email.setAttribute('type', 'email');
     email.setAttribute('name', 'mail');
-    email.setAttribute('placeholder', 'Enter Your Email');
+    email.setAttribute('placeholder', 'Введите email');
+    email.classList.add('regform__input');
     regForm.append(email);
 
     const password = document.createElement('input');
     password.setAttribute('type', 'password');
     password.setAttribute('name', 'passw');
     password.classList.add('regform__password');
-    password.setAttribute('placeholder', 'Enter Your Password');
+    password.setAttribute('placeholder', 'Введите пароль');
+    password.classList.add('regform__input');
     regForm.append(password);
 
     const sendButton = document.createElement('input');
     sendButton.setAttribute('type', 'submit');
-    sendButton.setAttribute('value', 'Send');
+    sendButton.setAttribute('value', 'Отправить');
     sendButton.classList.add('regform__button');
     regForm.append(sendButton);
 
@@ -208,8 +214,8 @@ function createLoginPage() {
     const notRegistered = document.createElement('a');
     notRegistered.href = 'signup';
     notRegistered.dataset.href = 'signup';
-    notRegistered.classList.add('signup');
-    notRegistered.textContent = 'I don`t have an account. Sign up.';
+    notRegistered.classList.add('link');
+    notRegistered.textContent = 'У Вас нет акканута? Зарегистрируйтесь.';
 
     loginSection.append(notRegistered);
     app.append(loginSection);
@@ -246,6 +252,7 @@ function createLoginPage() {
 
 function createMenu() {
     const name = document.createElement('h2');
+    name.classList.add('header');
     name.textContent = 'СПИСОК КНИГ';
 
     const menuSection = document.createElement('section');
@@ -316,6 +323,7 @@ function createAddBookPage() {
     const year = document.createElement('input');
     year.setAttribute('type', 'number');
     year.setAttribute('max', '2020');
+    year.setAttribute('min', '0');
     year.setAttribute('name', 'year');
     year.setAttribute('placeholder', 'Год издания');
     newBook.append(year);
@@ -511,6 +519,7 @@ function createEditBookPage(book) {
     const year = document.createElement('input');
     year.setAttribute('type', 'number');
     year.setAttribute('max', '2020');
+    year.setAttribute('min', '0');
     year.setAttribute('name', 'year');
     year.setAttribute('value', `${book.year}`);
     editBook.append(year);
@@ -575,7 +584,10 @@ function exit() {
 }
 
 function changeTheme() {
+    const background = document.querySelectorAll('.bg')[0];
+
     app.classList.toggle('_theme');
+    background.classList.toggle('_theme');
 
     const menuItemsToChangeTheme = document.querySelectorAll('h2, section, .menu, .menu *, .menu__user, .library, .library *');
     menuItemsToChangeTheme.forEach(item => {

@@ -253,7 +253,7 @@ function createLoginPage() {
 function createMenu() {
     const name = document.createElement('h2');
     name.classList.add('header');
-    name.textContent = 'СПИСОК КНИГ';
+    name.textContent = 'МОИ КНИГИ';
 
     const menuSection = document.createElement('section');
     menuSection.dataset.sectionName = 'menu';
@@ -338,7 +338,7 @@ function createAddBookPage() {
     const sendButton = document.createElement('button');
     sendButton.setAttribute('type', 'submit');
     sendButton.setAttribute('value', 'Send');
-    sendButton.textContent = 'Отправить';
+    sendButton.textContent = 'Добавить';
     sendButton.classList.add('form__button');
     newBook.append(sendButton);
 
@@ -585,9 +585,15 @@ function exit() {
 
 function changeTheme() {
     const background = document.querySelectorAll('.bg')[0];
+    const background2 = document.querySelectorAll('.bg2')[0];
+    const background3 = document.querySelectorAll('.bg3')[0];
+    const background4 = document.querySelectorAll('.bg4')[0];
 
     app.classList.toggle('_theme');
     background.classList.toggle('_theme');
+    background2.classList.toggle('_theme');
+    background3.classList.toggle('_theme');
+    background4.classList.toggle('_theme');
 
     const menuItemsToChangeTheme = document.querySelectorAll('h2, section, .menu, .menu *, .menu__user, .library, .library *');
     menuItemsToChangeTheme.forEach(item => {

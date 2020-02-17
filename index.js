@@ -335,6 +335,13 @@ function createAddBookPage() {
     comment.setAttribute('placeholder', 'Автор книги');
     newBook.append(comment);
 
+    const description = document.createElement('input');
+    description.setAttribute('type', 'text');
+    description.setAttribute('maxlength', '300');
+    description.setAttribute('name', 'description');
+    description.setAttribute('placeholder', 'Описание');
+    newBook.append(description);
+
     const sendButton = document.createElement('button');
     sendButton.setAttribute('type', 'submit');
     sendButton.setAttribute('value', 'Send');
@@ -353,7 +360,8 @@ function createAddBookPage() {
         const bookData = {
             title: newBook.title.value,
             year: newBook.year.value,
-            info: newBook.comment.value
+            info: newBook.comment.value,
+            description: newBook.description.value
         };
 
         Http.post('books', bookData)
@@ -475,9 +483,15 @@ function createBookPage(bookString) {
     const comment = document.createElement('div');
     comment.classList.add('book__info');
     comment.textContent = `Автор: ${book.info}`;
+
+    const description = document.createElement('div');
+    description.classList.add('book__info');
+    description.textContent = `Описание: ${book.description}`;
+
     bookPage.append(header);
     bookPage.append(year);
     bookPage.append(comment);
+    bookPage.append(description);
 
     const editBook = document.createElement('a');
     editBook.href = `edit`;
@@ -530,6 +544,12 @@ function createEditBookPage(book) {
     comment.setAttribute('value', `${book.info}`);
     editBook.append(comment);
 
+    const description = document.createElement('input');
+    description.setAttribute('type', 'text');
+    description.setAttribute('name', 'description');
+    description.setAttribute('value', `${book.description}`);
+    editBook.append(description);
+
     const sendButton = document.createElement('button');
     sendButton.setAttribute('type', 'submit');
     sendButton.setAttribute('value', 'Send');
@@ -549,7 +569,8 @@ function createEditBookPage(book) {
             id: book.id,
             title: editBook.title.value,
             year: editBook.year.value,
-            info: editBook.comment.value
+            info: editBook.comment.value,
+            description: editBook.description.value
         };
 
         Http.post('books/edit', bookData)

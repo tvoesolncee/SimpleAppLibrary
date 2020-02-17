@@ -79,8 +79,8 @@ body {
     margin: 20px;
     padding: 4px;
     display: flex;
-    border: solid 2px red;
-    color: red;
+    border: solid 2px #bd3826;
+    color: #bd3826;
 }
 
 .regSection {

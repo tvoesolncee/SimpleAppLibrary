@@ -206,7 +206,7 @@ body {
     width: 250px;
 }
 
-.form input {
+.form input, .form textarea {
     background-color: inherit;
     border: none;
     border-bottom: solid 2px #EF6C00;
@@ -215,6 +215,11 @@ body {
     color: white;
     padding: 3px 8px;
     margin-bottom: 30px;
+}
+
+.form textarea {
+    height: 220px;
+    overflow-y: hidden;
 }
 
 .form__button {
@@ -376,7 +381,7 @@ body {
 }
 
 .book * {
-    text-align: center;
+    text-align: start;
     display: block;
     word-break: break-word;
 }

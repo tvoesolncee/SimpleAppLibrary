@@ -335,9 +335,8 @@ function createAddBookPage() {
     comment.setAttribute('placeholder', 'Автор книги');
     newBook.append(comment);
 
-    const description = document.createElement('input');
+    const description = document.createElement('textarea');
     description.setAttribute('type', 'text');
-    description.setAttribute('maxlength', '300');
     description.setAttribute('name', 'description');
     description.setAttribute('placeholder', 'Описание');
     newBook.append(description);
@@ -486,7 +485,7 @@ function createBookPage(bookString) {
 
     const description = document.createElement('div');
     description.classList.add('book__info');
-    description.textContent = `Описание: ${book.description}`;
+    description.textContent = `${book.description}`;
 
     bookPage.append(header);
     bookPage.append(year);
@@ -544,10 +543,11 @@ function createEditBookPage(book) {
     comment.setAttribute('value', `${book.info}`);
     editBook.append(comment);
 
-    const description = document.createElement('input');
+    const description = document.createElement('textarea');
     description.setAttribute('type', 'text');
     description.setAttribute('name', 'description');
-    description.setAttribute('value', `${book.description}`);
+    //description.setAttribute('value', `${book.description}`);
+    description.textContent = `${book.description}`;
     editBook.append(description);
 
     const sendButton = document.createElement('button');

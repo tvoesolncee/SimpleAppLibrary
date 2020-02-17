@@ -45,7 +45,7 @@ class App {
         if (!email || !email.match(validEmail) ||
             !password || password.length <= 4 ||
             !gender) {
-            return res.status(400).json({error: 'Не валидные данные пользователя.'});
+            return res.status(400).json({error: 'Некорректные данные пользователя.'});
         }
         if (Array.from(users.keys()).includes(email)) {
             return res.status(400).json({error: 'Пользователь с таким e-mail уже зарегистрирован.'});

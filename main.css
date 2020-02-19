@@ -6,7 +6,6 @@ body {
     align-content: center;
     font-family: 'Roboto Condensed', sans-serif;
     font-size: 18px;
-    height: 100vh;
 }
 
 .bg {
@@ -198,6 +197,10 @@ body {
 
 .link:hover {
     text-decoration: none;
+}
+
+.link._theme {
+    color: black;
 }
 
 .form {

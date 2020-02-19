@@ -58,7 +58,7 @@ function createStartPage() {
             console.log(error);
         });
 
-    app.classList.remove('_theme');
+    //app.classList.remove('_theme');
 
     const regSection = document.createElement('section');
     regSection.dataset.sectionName = 'registration';
@@ -149,6 +149,8 @@ function createStartPage() {
     const error = document.createElement('span');
     error.classList.add('error');
 
+    checkTheme();
+
     regForm.addEventListener('submit', event => {
 
         event.preventDefault();
@@ -222,6 +224,8 @@ function createLoginPage() {
 
     const error = document.createElement('span');
     error.classList.add('error');
+
+    checkTheme();
 
     regForm.addEventListener('submit', (event) => {
 
